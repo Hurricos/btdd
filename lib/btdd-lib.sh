@@ -17,6 +17,26 @@ function _gpt_or_dos {
     sfdisk -d "$dev" | sed -n 's/^label: //p'
 }
 
+# https://askubuntu.com/questions/57908/how-can-i-quickly-copy-a-gpt-partition-scheme-from-one-hard-drive-to-another
+# gave me hints
+#
+function _dump_part_table {
+    local dev="$1"
+    local type=$(_gpt_or_dos "$dev")
+    case "$type" in
+        "dos")
+            sfdisk -d "$dev"
+            ;;
+        "gpt")
+            sgdisk --backup=/dev/stdout "$dev"
+            ;;
+        *)
+            log "something's up in _gpt_or_dos on $dev"
+            return 1;
+            ;;
+    esac
+}
+
 function _shrink_ext4 {
     local part="$1"
     e2fsck -y -f "$part";
