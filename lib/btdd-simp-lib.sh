@@ -158,26 +158,24 @@ function _parttable_end_address {
 function create_torrent {
     # need to use the above to bencode
     local dev="$1"
-    local tmp="$(mktemp -d)"
+    local outfile="$2"
 
+    local tmp="$(mktemp -d)"
+    local piece_length=$((2**22))
+    local file_size="$(_parttable_end_address "$dev")"
 
     local olddir="$PWD"
     cd "$tmp"
-    #echo -n "$((2**22))" > "piece length"
-    local piece_length=$((2**22))
-    local file_size="$(_parttable_end_address "$dev")"
-    # TODO
 
-    # Figure out what part of the losetup -d process causes a write to
-    # disk which invalidates the checksum previously provided
     _create_blocks_for_file "$dev" "$file_size" "$piece_length" > "pieces"
 
-    # just shimming in the rest here, for now
+    # TODO
+    # Replace this with bencode.lua
     testing_prefix="d8:announce28:udp://10.0.7.1:6969/announce10:created by7:btdd v013:creation datei`date +%s`e4:infod6:lengthi${file_size}e4:name26:2020-09-05_auron_paine.img12:piece lengthi${piece_length}e6:pieces$(wc -c "pieces" | awk '{print $1}'):"
 
-    echo -n "$testing_prefix" > /tmp/torrentfile
-    cat "pieces" >> /tmp/torrentfile
-    echo -n "ee" >> /tmp/torrentfile
+    echo -n "$testing_prefix" > "$outfile"
+    cat "pieces" >> "$outfile"
+    echo -n "ee" >> "$outfile"
     cd "$olddir"
     rm -r "$tmp"
     echo "$tmp"
