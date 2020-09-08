@@ -52,9 +52,6 @@ function _get_ext4_size {
     echo "$((count*bs))"
 }
 
-# function _get_disk_end {
-#     local disk="$1"
-
 function _shrink_part {
     ALIGN_SZ=4096 # force alignment to 4096-byte boundaries
     SEC_SZ=512
@@ -117,23 +114,6 @@ function _shrink_disk {
 
         cat > /dev/null # Skip all after the first partition
     done
-}
-
-function _hash_block {
-    local if="$1";
-    local bs="$2";
-    local skip="$3"
-    dd if="$if" bs="$bs" skip="$skip" count=1 | sha1sum | awk '{print $1}'
-}
-
-# TODO: Finish me
-function _dir_to_bencode {
-    local dirname="$1"
-
-    # This dir contains files; each file is a key; the value of the
-    # key is the content of the file.
-
-    # Output the bencoded representation of the directory.
 }
 
 function _create_blocks_for_file {
