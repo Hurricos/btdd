@@ -99,7 +99,7 @@ function _list_ext4_parts {
         awk '$2 == "ext4" {print $1}'
 }
 
-function _shrink_disk {
+function shrink_disk {
     local dev="$1"
 
     prefix "shrink> " echo "Syncing disks ..."
@@ -155,8 +155,7 @@ function _parttable_end_address {
     echo "$((lastsector*512))"
 }
 
-function _create_torrent {
-    # https://gist.githubusercontent.com/joshkunz/4e114cd473c64498af5d/raw/c7bf931effaea7274cb3ed5ac001d2b6665c972e/bencode.lua
+function create_torrent {
     # need to use the above to bencode
     local dev="$1"
     local tmp="$(mktemp -d)"
